@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeLife — Adult (30–44 Years) · Free Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* THEME ENGINE */
+:root {
+  --navy:#0D1B2A; --navy-mid:#1A2F45;
+  --critical:#DC2626; --high:#EA580C; --medium:#D97706; --low:#16A34A;
+  --radius:12px;
+  --shadow:0 2px 12px rgba(13,27,42,0.08);
+  --shadow-lg:0 8px 32px rgba(13,27,42,0.14);
+}
+body[data-theme="forest"] { --accent:#16A34A; --accent-dark:#15803D; --accent-rgb:22,163,74; }
+body[data-theme="teal"]   { --accent:#14B8A6; --accent-dark:#0D9488; --accent-rgb:20,184,166; }
+body[data-theme="amber"]  { --accent:#F59E0B; --accent-dark:#D97706; --accent-rgb:245,158,11; }
+body[data-theme="rose"]   { --accent:#E11D48; --accent-dark:#BE123C; --accent-rgb:225,29,72; }
+body[data-theme="violet"] { --accent:#7C3AED; --accent-dark:#6D28D9; --accent-rgb:124,58,237; }
+body[data-theme="ocean"]  { --accent:#2563EB; --accent-dark:#1D4ED8; --accent-rgb:37,99,235; }
+body[data-mode="light"] {
+  --bg:#F9F6F0; --surface:#FFFFFF; --surface-2:#EDE6D6; --tile:#F9F6F0;
+  --ink:#0D1B2A; --ink-mid:#3A4A5C; --ink-soft:#6B7A8D; --line:#EDE6D6;
+  --critical-bg:#FEF2F2; --high-bg:#FFF7ED; --medium-bg:#FFFBEB; --low-bg:#F0FDF4;
+}
+body[data-mode="dark"] {
+  --bg:#0B1420; --surface:#13202F; --surface-2:#1C2C3E; --tile:#0F1A28;
+  --ink:#EDF2F7; --ink-mid:#B7C4D1; --ink-soft:#8194A7; --line:#243549;
+  --critical-bg:rgba(220,38,38,.16); --high-bg:rgba(234,88,12,.16);
+  --medium-bg:rgba(217,119,6,.16); --low-bg:rgba(22,163,74,.16);
+  --shadow:0 2px 12px rgba(0,0,0,0.35); --shadow-lg:0 8px 32px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
+.topbar{background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 20px;min-height:58px;position:relative;z-index:300;border-bottom:2px solid var(--accent);flex-wrap:wrap;}
+.topbar-brand{display:flex;align-items:center;gap:12px;}
+.topbar-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;font-family:'Sora',sans-serif;color:#fff;box-shadow:0 2px 8px rgba(var(--accent-rgb),.4);}
+.topbar-name{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.3px;}
+.topbar-name span{color:var(--accent);}
+.topbar-tagline{font-size:11px;color:rgba(255,255,255,.5);font-style:italic;}
+.topbar-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.progress-pill{background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.3);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.progress-pill span{color:#fff;font-size:13px;}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;}
+.tool-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;display:flex;align-items:center;gap:5px;transition:all .2s;position:relative;}
+.tool-btn:hover{background:rgba(var(--accent-rgb),.3);border-color:var(--accent);}
+.tool-btn .tb-label{font-size:11px;}
+@media(max-width:820px){.tool-btn .tb-label{display:none;}.topbar-tagline{display:none;}}
+.dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:10px;display:none;z-index:400;min-width:190px;}
+.dropdown.open{display:block;}
+.dropdown-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--ink-soft);padding:4px 8px 8px;}
+.theme-row{display:flex;align-items:center;gap:10px;width:100%;padding:8px;border:none;background:none;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--ink);text-align:left;}
+.theme-row:hover{background:rgba(var(--accent-rgb),.08);}
+.theme-row.selected{background:rgba(var(--accent-rgb),.12);}
+.theme-swatch{width:18px;height:18px;border-radius:6px;flex-shrink:0;}
+.theme-row .check-mark{margin-left:auto;color:var(--accent);font-weight:800;}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,#3a2703 100%);padding:48px 32px 40px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(var(--accent-rgb),.14) 0%,transparent 60%);}
+.hero-emoji{font-size:64px;line-height:1;margin-bottom:12px;display:block;position:relative;}
+.hero-title{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;color:#fff;margin-bottom:6px;position:relative;}
+.hero-subtitle{font-size:15px;color:rgba(255,255,255,.65);margin-bottom:20px;position:relative;}
+.hero-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;position:relative;}
+.hero-badge{background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:5px;cursor:pointer;transition:background .2s,transform .15s;user-select:none;}
+.hero-badge:hover{background:rgba(var(--accent-rgb),.28);transform:translateY(-1px);}
+.progress-section{background:var(--surface);border-bottom:1px solid var(--line);padding:0 32px;height:46px;display:flex;align-items:center;gap:20px;position:sticky;top:36px;z-index:290;box-shadow:0 2px 8px rgba(13,27,42,.06);}
+.progress-label{font-size:12px;font-weight:600;color:var(--ink-soft);white-space:nowrap;}
+.progress-track{flex:1;height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-dark));border-radius:4px;width:0%;transition:width .4s ease;}
+.progress-count{font-size:13px;font-weight:700;color:var(--accent);white-space:nowrap;}
+.celebrate{display:none;background:linear-gradient(135deg,rgba(var(--accent-rgb),.15),rgba(var(--accent-rgb),.05));border-bottom:1px solid rgba(var(--accent-rgb),.3);padding:14px 32px;text-align:center;font-weight:700;color:var(--accent-dark);font-size:15px;font-family:'Sora',sans-serif;}
+.celebrate.show{display:block;}
+.search-wrap{padding:20px 20px 0;max-width:860px;margin:0 auto;}
+.search-box{width:100%;padding:10px 16px 10px 40px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:14px;font-family:'Inter',sans-serif;color:var(--ink);outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7A8D' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center;transition:border-color .2s;}
+.search-box:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.1);}
+.search-no-results{text-align:center;padding:40px;color:var(--ink-soft);font-size:14px;display:none;}
+.zone-tabs{background:var(--surface);border-bottom:2px solid var(--line);display:flex;overflow-x:auto;padding:0 24px;gap:4px;scrollbar-width:none;position:sticky;top:82px;z-index:200;}
+.zone-tabs::-webkit-scrollbar{display:none;}
+.zone-tab{display:flex;align-items:center;gap:7px;padding:14px 18px;border:none;background:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--ink-soft);white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;margin-bottom:-2px;}
+.zone-tab:hover{color:var(--accent);background:rgba(var(--accent-rgb),.05);}
+.zone-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.zone-tab-count{background:var(--surface-2);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;color:var(--ink-soft);}
+.zone-tab.active .zone-tab-count{background:rgba(var(--accent-rgb),.15);color:var(--accent);}
+.main{max-width:860px;margin:0 auto;padding:28px 20px 60px;}
+.stats-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center;}
+.stat-pill{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;user-select:none;}
+.stat-pill:hover{border-color:var(--accent);}
+.stat-pill.filter-on{border-color:var(--accent);background:rgba(var(--accent-rgb),.08);box-shadow:0 0 0 2px rgba(var(--accent-rgb),.15);}
+.stat-dot{width:8px;height:8px;border-radius:50%;}
+.stat-dot.critical{background:var(--critical);}.stat-dot.high{background:var(--high);}.stat-dot.medium{background:var(--medium);}.stat-dot.low{background:var(--low);}
+.stat-count{font-size:15px;font-weight:700;}
+.risk-legend{display:flex;gap:12px;flex-wrap:wrap;margin-left:auto;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--ink-soft);}
+.legend-dot{width:8px;height:8px;border-radius:3px;}
+.zone-panel{display:none;}
+.zone-panel.active{display:block;}
+.zone-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding:20px 24px;background:var(--surface);border-radius:var(--radius);border:1px solid rgba(var(--accent-rgb),.2);box-shadow:var(--shadow);}
+.zone-icon{width:52px;height:52px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-rgb),.06));border:2px solid rgba(var(--accent-rgb),.25);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.zone-header-text h2{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.zone-header-text p{font-size:13px;color:var(--ink-soft);}
+.checks-list{display:flex;flex-direction:column;gap:10px;}
+.check-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .2s;}
+.check-card:hover{box-shadow:var(--shadow-lg);}
+.check-card.completed{border-color:rgba(var(--accent-rgb),.3);background:rgba(var(--accent-rgb),.03);}
+.check-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;}
+.check-checkbox{width:22px;height:22px;min-width:22px;border:2px solid var(--surface-2);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:13px;background:var(--surface);}
+.check-card.completed .check-checkbox{background:var(--accent);border-color:var(--accent);color:#fff;}
+.check-num{font-size:10px;font-weight:700;color:var(--ink-soft);min-width:30px;font-family:'Sora',sans-serif;}
+.check-risk{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.risk-critical{background:var(--critical-bg);color:var(--critical);}
+.risk-high{background:var(--high-bg);color:var(--high);}
+.risk-medium{background:var(--medium-bg);color:var(--medium);}
+.risk-low{background:var(--low-bg);color:var(--low);}
+.check-title{flex:1;font-size:14px;font-weight:600;color:var(--ink);line-height:1.4;}
+.check-card.completed .check-title{color:var(--ink-soft);text-decoration:line-through;}
+.check-chevron{font-size:12px;color:var(--ink-soft);transition:transform .25s;min-width:16px;}
+.check-card.open .check-chevron{transform:rotate(180deg);}
+.check-detail{display:none;padding:0 18px 18px 18px;border-top:1px solid var(--line);}
+.check-card.open .check-detail{display:block;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+@media(max-width:600px){.detail-grid{grid-template-columns:1fr;}}
+.detail-item{background:var(--tile);border-radius:8px;padding:11px 13px;}
+.detail-item.full{grid-column:1/-1;}
+.detail-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--accent-dark);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+body[data-mode="dark"] .detail-label{color:var(--accent);}
+.detail-value{font-size:13px;color:var(--ink);line-height:1.55;}
+.tip-box{margin-top:12px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.08),rgba(var(--accent-rgb),.04));border:1px solid rgba(var(--accent-rgb),.25);border-left:4px solid var(--accent);border-radius:8px;padding:11px 14px;display:flex;gap:10px;align-items:flex-start;}
+.tip-icon{font-size:16px;line-height:1;margin-top:1px;}
+.tip-text{font-size:13px;color:var(--ink);line-height:1.55;}
+.tip-text strong{color:var(--accent-dark);font-weight:700;}
+body[data-mode="dark"] .tip-text strong{color:var(--accent);}
+.measurement-box{margin-top:10px;background:rgba(var(--accent-rgb),.05);border:1px solid var(--line);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--ink-mid);line-height:1.5;font-family:'Sora',sans-serif;}
+.measurement-box strong{color:var(--ink);font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px;}
+.zone-actions{display:flex;justify-content:flex-end;gap:10px;margin:14px 0 18px;flex-wrap:wrap;}
+.btn{padding:9px 18px;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-outline{background:var(--surface);border:1px solid var(--line);color:var(--ink-mid);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;box-shadow:0 2px 8px rgba(var(--accent-rgb),.3);}
+.btn-primary:hover{box-shadow:0 4px 16px rgba(var(--accent-rgb),.4);transform:translateY(-1px);}
+.modal-overlay{position:fixed;inset:0;background:rgba(13,27,42,.6);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;backdrop-filter:blur(3px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:16px;max-width:640px;width:100%;box-shadow:var(--shadow-lg);border-top:4px solid var(--accent);}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line);}
+.modal-head h3{font-family:'Sora',sans-serif;font-size:18px;color:var(--ink);display:flex;align-items:center;gap:8px;}
+.modal-close{background:none;border:none;font-size:22px;color:var(--ink-soft);cursor:pointer;line-height:1;padding:4px;}
+.modal-close:hover{color:var(--accent);}
+.modal-body{padding:20px 24px 26px;color:var(--ink-mid);font-size:13.5px;}
+.modal-body h4{font-family:'Sora',sans-serif;font-size:14px;color:var(--ink);margin:16px 0 6px;display:flex;align-items:center;gap:6px;}
+.modal-body h4:first-child{margin-top:0;}
+.modal-body p{margin-bottom:8px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;padding:0 24px 22px;flex-wrap:wrap;}
+.rule-list{list-style:none;margin:6px 0;}
+.rule-list li{padding:6px 0 6px 26px;position:relative;border-bottom:1px dashed var(--line);}
+.rule-list li::before{content:'✓';position:absolute;left:2px;color:var(--accent);font-weight:800;}
+.collection{max-width:860px;margin:0 auto;padding:10px 20px 50px;}
+.collection h3{font-family:'Sora',sans-serif;font-size:18px;color:var(--ink);margin-bottom:4px;}
+.collection>p{font-size:13px;color:var(--ink-soft);margin-bottom:16px;}
+.collection-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
+.module-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px;transition:all .2s;}
+.module-card:hover{border-color:var(--accent);box-shadow:var(--shadow);}
+.module-card .m-emoji{font-size:26px;}
+.module-card .m-name{font-family:'Sora',sans-serif;font-weight:700;font-size:13.5px;color:var(--ink);}
+.module-card .m-age{font-size:11.5px;color:var(--ink-soft);}
+.module-tag{margin-top:6px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-radius:6px;padding:3px 8px;align-self:flex-start;}
+.module-tag.owned{background:rgba(var(--accent-rgb),.15);color:var(--accent-dark);}
+body[data-mode="dark"] .module-tag.owned{color:var(--accent);}
+.module-tag.addon{background:var(--surface-2);color:var(--ink-soft);}
+.module-tag.coming{background:transparent;color:var(--ink-soft);border:1px dashed var(--line);}
+.footer{background:var(--navy);color:rgba(255,255,255,.5);text-align:center;padding:24px;font-size:12px;line-height:1.8;}
+.footer strong{color:rgba(255,255,255,.8);}
+.zic svg{width:16px;height:16px;vertical-align:-3px;}
+.zone-tab .zic svg{color:inherit;}
+.topbar-logo svg{width:22px;height:22px;color:#fff;}
+.hero-emoji svg{width:72px;height:72px;color:var(--accent);filter:drop-shadow(0 4px 14px rgba(var(--accent-rgb),.45));}
+.zone-icon svg{width:27px;height:27px;color:var(--accent-dark);}
+body[data-mode="dark"] .zone-icon svg{color:var(--accent);}
+.module-card .m-emoji svg{width:30px;height:30px;color:var(--accent-dark);}
+body[data-mode="dark"] .module-card .m-emoji svg{color:var(--accent);}
+html{scroll-behavior:smooth;}
+.float-nav{position:fixed;right:16px;bottom:20px;display:flex;flex-direction:column;gap:8px;z-index:250;}
+.float-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--accent-dark);font-size:18px;font-weight:800;cursor:pointer;box-shadow:var(--shadow-lg);transition:all .2s;}
+.float-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-2px);}
+body[data-mode="dark"] .float-btn{color:var(--accent);}
+.zone-disclaimer{margin-top:18px;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;font-size:11.5px;color:var(--ink-soft);text-align:center;}
+/* ── DEMO ADDITIONS ── */
+.demo-banner{background:linear-gradient(90deg,var(--accent),var(--accent-dark));color:#fff;text-align:center;padding:8px 16px;font-size:13px;font-weight:700;font-family:'Sora',sans-serif;position:sticky;top:0;z-index:410;height:36px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.demo-banner a{color:#fff;text-decoration:underline;font-weight:800;}
+.tool-btn .lockb{position:absolute;top:-6px;right:-6px;font-size:10px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));}
+.check-card.locked{opacity:.85;}
+.check-card.locked .check-title{color:var(--ink-soft);}
+.lock-icon{width:22px;min-width:22px;text-align:center;font-size:14px;}
+.unlock-strip{margin:22px 0 4px;background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:14px;padding:26px 24px;text-align:center;color:#fff;}
+.unlock-strip h3{font-family:'Sora',sans-serif;font-size:19px;margin-bottom:6px;}
+.unlock-strip p{font-size:13.5px;color:rgba(255,255,255,.7);margin-bottom:14px;max-width:560px;margin-left:auto;margin-right:auto;}
+.modal.demo-modal{max-width:440px;padding:28px;text-align:center;}
+.modal.demo-modal .m-emoji{font-size:44px;}
+.modal.demo-modal h3{font-family:'Sora',sans-serif;font-size:19px;margin:10px 0 8px;color:var(--ink);justify-content:center;display:flex;}
+.modal.demo-modal p{font-size:13.5px;color:var(--ink-mid);margin-bottom:16px;}
+.modal.demo-modal .btn{width:100%;margin-bottom:8px;text-decoration:none;display:inline-block;}
+.modal.demo-modal .later{background:none;border:none;color:var(--ink-soft);font-size:12.5px;cursor:pointer;text-decoration:underline;}
+</style>
+</head>
+<body data-theme="forest" data-mode="light">
+
+<div class="demo-banner">✨ FREE DEMO — 3 of 84 checks unlocked&nbsp;<a href="https://snagtag.gumroad.com/l/life-legacy-command-center" target="_blank" rel="noopener">Unlock all 84 →</a></div>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo" id="logo-icon">S</div>
+    <div>
+      <div class="topbar-name">Safe<span>Life</span></div>
+      <div class="topbar-tagline">To all moms by a mom · NEBOSH &amp; OSHA Professional</div>
+    </div>
+  </div>
+  <div class="topbar-meta">
+    <div class="toolbar">
+      <button class="tool-btn" id="btn-search" title="Search all checks">🔍</button>
+      <button class="tool-btn lock-tool" id="btn-manual" title="User Manual — in the full module">📖<span class="tb-label">Manual</span><span class="lockb">🔒</span></button>
+      <button class="tool-btn lock-tool" id="btn-cheat" title="Emergency Cheat Sheet — in the full module">🚨<span class="tb-label">Cheat Sheet</span><span class="lockb">🔒</span></button>
+      <button class="tool-btn lock-tool" id="btn-print" title="Print / Save as PDF — in the full module">🖨️<span class="tb-label">Print / PDF</span><span class="lockb">🔒</span></button>
+      <button class="tool-btn lock-tool" id="btn-save" title="Save progress to file — in the full module">💾<span class="tb-label">Save</span><span class="lockb">🔒</span></button>
+      <button class="tool-btn lock-tool" id="btn-load" title="Load saved progress — in the full module">📂<span class="tb-label">Load</span><span class="lockb">🔒</span></button>
+      <button class="tool-btn lock-tool" id="btn-theme" title="Colour theme — in the full module">🎨<span class="tb-label">Theme</span><span class="lockb">🔒</span></button>
+      <button class="tool-btn" id="btn-mode" title="Light / dark mode">🌙</button>
+    </div>
+    <div class="progress-pill"><span id="topbar-done">0</span>&nbsp;/ 84 <span style="color:inherit;font-size:12px;">checks done</span></div>
+  </div>
+</header>
+
+<div class="hero">
+  <span class="hero-emoji" id="hero-icon">💼</span>
+  <div class="hero-title">Adult Safety — 30 to 44 Years</div>
+  <div class="hero-subtitle">84 evidence-based safety checks across 6 zones · Home ownership, career, family and midlife health — safeguarding the life you have built for everyone who depends on you</div>
+  <div class="hero-badges">
+    <div class="hero-badge" data-zone="1"><span class="zic" data-zi="z1"></span> <span>Home &amp; Household</span></div>
+    <div class="hero-badge" data-zone="2"><span class="zic" data-zi="z2"></span> <span>Family &amp; Caregiving</span></div>
+    <div class="hero-badge" data-zone="3"><span class="zic" data-zi="z3"></span> <span>Career &amp; Workplace</span></div>
+    <div class="hero-badge" data-zone="4"><span class="zic" data-zi="z4"></span> <span>Midlife Health</span></div>
+    <div class="hero-badge" data-zone="5"><span class="zic" data-zi="z5"></span> <span>Financial Security</span></div>
+    <div class="hero-badge" data-zone="6"><span class="zic" data-zi="z6"></span> <span>Relationships &amp; Prep</span></div>
+  </div>
+</div>
+
+<div class="progress-section">
+  <div class="progress-label">Overall Progress</div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-count" id="progress-count">0 of 84</div>
+</div>
+<div class="celebrate" id="celebrate">🎉 <span>All 84 checks complete — your home is SafeLife certified! Print your checklist as a keepsake.</span></div>
+
+<div class="search-wrap">
+  <input class="search-box" type="text" id="search-input" placeholder="Search checks… e.g. ladder safety, smoke alarm, blood pressure, will, burnout, emergency fund…">
+</div>
+
+<div class="zone-tabs" id="zone-tabs">
+  <button class="zone-tab active" data-zone="1"><span class="zic" data-zi="z1"></span> <span>Home Ownership &amp; Household Safety</span> <span class="zone-tab-count" id="ztc-1">0/14</span></button>
+  <button class="zone-tab" data-zone="2"><span class="zic" data-zi="z2"></span> <span>Family, Parenting &amp; Caregiving</span> <span class="zone-tab-count" id="ztc-2">0/14</span></button>
+  <button class="zone-tab" data-zone="3"><span class="zic" data-zi="z3"></span> <span>Workplace &amp; Career Safety</span> <span class="zone-tab-count" id="ztc-3">0/14</span></button>
+  <button class="zone-tab" data-zone="4"><span class="zic" data-zi="z4"></span> <span>Midlife Health &amp; Preventive Care</span> <span class="zone-tab-count" id="ztc-4">0/14</span></button>
+  <button class="zone-tab" data-zone="5"><span class="zic" data-zi="z5"></span> <span>Financial Security &amp; Life Planning</span> <span class="zone-tab-count" id="ztc-5">0/14</span></button>
+  <button class="zone-tab" data-zone="6"><span class="zic" data-zi="z6"></span> <span>Relationships &amp; Emergency Preparedness</span> <span class="zone-tab-count" id="ztc-6">0/14</span></button>
+</div>
+
+<div class="main" id="main-content">
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-pill" data-risk="critical"><span class="stat-dot critical"></span><span class="stat-count" id="s-critical">0</span> <span>Critical</span></div>
+    <div class="stat-pill" data-risk="high"><span class="stat-dot high"></span><span class="stat-count" id="s-high">0</span> <span>High</span></div>
+    <div class="stat-pill" data-risk="medium"><span class="stat-dot medium"></span><span class="stat-count" id="s-medium">0</span> <span>Medium</span></div>
+    <div class="stat-pill" data-risk="low"><span class="stat-dot low"></span><span class="stat-count" id="s-low">0</span> <span>Low</span></div>
+    <div class="risk-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--critical)"></div><span>Critical = immediate action</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--high)"></div><span>High = urgent attention</span></div>
+    </div>
+  </div>
+  <div id="search-no-results" class="search-no-results"><span>No checks match your search. Try different keywords.</span><br><span style="font-size:12.5px;">The full module includes the complete searchable detail of all 84 checks.</span></div>
+</div>
+
+<div class="collection">
+  <h3>The SafeLife Collection</h3>
+  <p>One safety system for every stage of life. Every module below is a complete, standalone 84-check system — available separately, or as the full 12-module bundle.</p>
+  <div class="collection-grid" id="collection-grid"></div>
+</div>
+
+<div class="collection" style="padding-top:0;">
+  <h3>Situation Modules</h3>
+  <p>Real-life situations and conditions — each its own complete, standalone 84-check system. Available separately as they launch.</p>
+  <div class="collection-grid" id="situation-grid"></div>
+</div>
+
+<footer class="footer">
+  <strong>SafeLife</strong> · Adult Module (30–44 Years) · Free Demo<br>
+  Created by a NEBOSH &amp; OSHA trained HSE professional · "To all moms by a mom"<br>
+  Evidence base: WHO · NICE clinical guidance · ISO 45001 occupational health &amp; safety · EN fire, electrical and ladder safety standards · international financial-planning and family-caregiving guidance<br>
+  <span style="color:rgba(255,255,255,.35);">This checklist is educational and does not replace professional medical advice. Always consult your doctor or health professional.</span>
+</footer>
+
+<div class="modal-overlay" id="modal-unlock">
+  <div class="modal demo-modal">
+    <span class="m-emoji">🔒</span>
+    <h3 id="unlock-title">This feature is in the full module</h3>
+    <p>The full Adult module unlocks all <b>84 checks</b> across 6 zones — with exact HSE measurements, real international standards, real-world examples, the personalised printable emergency cheat sheet, the user manual, print/PDF, save &amp; load, and colour themes.</p>
+    <a class="btn btn-primary" href="https://snagtag.gumroad.com/l/life-legacy-command-center" target="_blank" rel="noopener">🔓 Unlock all 84 checks</a>
+    <button class="later" id="btn-later">Maybe later — keep exploring the demo</button>
+  </div>
+</div>
+
+<div class="float-nav">
+  <button class="float-btn" id="fn-top" title="Back to top">⤒</button>
+  <button class="float-btn" id="fn-prev" title="Previous check">↑</button>
+  <button class="float-btn" id="fn-next" title="Next check">↓</button>
+</div>
+
+<script>
+// ── SELLER CONFIG ──
+const BUY_URL = 'https://snagtag.gumroad.com/l/life-legacy-command-center';
+
+// ── ENGLISH LABELS (demo is English-only, matching the PRO English-only release) ──
+const L = {
+ofWord:'of', critical:'Critical', high:'High', medium:'Medium', low:'Low',
+who:'Who', what:'What', where:'Where', why:'Why', how:'How',
+standards:'Standards & Measurements', example:'Real-World Example', quickTip:'Quick Win',
+markAll:'Mark All Complete', unmarkAll:'Unmark All', expandAll:'Expand All', collapseAll:'Collapse All',
+disclaimer:'This checklist is educational and does not replace professional medical advice. Always consult your doctor or health professional.',
+z1:'Home Ownership & Household Safety', z2:'Family, Parenting & Caregiving', z3:'Workplace & Career Safety',
+z4:'Midlife Health & Preventive Care', z5:'Financial Security & Life Planning', z6:'Relationships & Emergency Preparedness',
+zd1:'14 checks: DIY and ladder safety, power tools, fire safety and escape planning, electrical hazards, damp and mould, and home security.',
+zd2:'14 checks: caregiving for children and aging parents, childproofing oversight, caregiver burnout, family emergency coordination and medication safety.',
+zd3:'14 checks: desk ergonomics, commuting safety, manual handling, workplace hazards, work-related stress and healthy work-life boundaries.',
+zd4:'14 checks: blood pressure and cancer screening, cardiovascular warning signs, sleep and nutrition, alcohol awareness, and recognising burnout, anxiety and depression.',
+zd5:'14 checks: emergency funds, life and home insurance, wills and power of attorney, financial scams and identity theft, and retirement planning.',
+zd6:'14 checks: partnership health, recognising relationship distress, social connection, household emergency kits and fire-escape-plan maintenance.',
+mn1:'Newborn', mn2:'Infant', mn3:'Toddler', mn4:'Preschooler', mn5:'School-Age', mn6:'Teenager',
+mn7:'Young Adult', mn8:'Adult', mn9:'Middle-Aged Adult', mn10:'Active Seniors', mn11:'Advanced Age', mn12:'90+ and Longevity',
+owned:'✓ Current Module', addon:'Available Separately',
+demoLocked:'Unlock in the full module', unlockH:'🔓 Unlock all 84 checks',
+unlockP:'Full Who/What/Where/Why/How detail on every check, exact HSE measurements, real international standards, the personalised printable emergency cheat sheet, user manual, print/PDF, save & load, and colour themes.',
+getFull:'Get the full Adult module →'
+};
+function t(key){ return L[key] || key; }
+
+const _svg = inner => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+const ICONS = {
+  stage: _svg('<rect x="3.8" y="8" width="16.4" height="11.2" rx="2"/><path d="M9.5 8V6.6A1.6 1.6 0 0 1 11.1 5h1.8a1.6 1.6 0 0 1 1.6 1.6V8M3.8 12.8h16.4"/>'),
+  z1: _svg('<path d="M4 11.5 12 4.5l8 7"/><path d="M6.2 10v8.3a1 1 0 0 0 1 1h9.6a1 1 0 0 0 1-1V10"/><path d="M10 19.3v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/>'),
+  z2: _svg('<circle cx="8.6" cy="7.6" r="2.7"/><path d="M4 19v-2.3a4.6 4.6 0 0 1 9.2 0V19"/><circle cx="17" cy="10.6" r="1.9"/><path d="M13.5 19v-1.7a3.3 3.3 0 0 1 6.5 0V19"/>'),
+  z3: _svg('<rect x="4.5" y="5" width="15" height="10.4" rx="1.6"/><path d="M9 19.5h6M12 15.4v4.1"/>'),
+  z4: _svg('<path d="M2.4 13h3l1.8-5.6 2.8 11 2-8.4 1.5 3h4.2l1.7-3"/>'),
+  z5: _svg('<path d="M12 3.6l6.6 2.6v5c0 4.7-2.8 7.9-6.6 9.3-3.8-1.4-6.6-4.6-6.6-9.3v-5z"/><path d="M9.2 12.1l1.9 1.9 3.7-4.1"/>'),
+  z6: _svg('<circle cx="9.2" cy="12" r="5.6"/><circle cx="14.8" cy="12" r="5.6"/>'),
+  stages: [
+    _svg('<circle cx="12" cy="13" r="6.5"/><path d="M12 6.5c0-1.8.8-2.7 2.3-3"/><circle cx="9.7" cy="12.2" r="0.65" fill="currentColor" stroke="none"/><circle cx="14.3" cy="12.2" r="0.65" fill="currentColor" stroke="none"/><path d="M9.9 15c1.4 1.2 2.8 1.2 4.2 0"/>'),
+    _svg('<circle cx="12" cy="7" r="3.2"/><path d="M6.8 20.5v-3.2a5.2 5.2 0 0 1 10.4 0v3.2"/>'),
+    _svg('<path d="M12 3.5l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/>'),
+    _svg('<rect x="6.5" y="8" width="11" height="12" rx="3"/><path d="M9.5 8V6.2a2.5 2.5 0 0 1 5 0V8"/><rect x="9.7" y="13" width="4.6" height="4" rx="1"/><path d="M6.5 11.5h11"/>'),
+    _svg('<path d="M5 15v-1.5a7 7 0 0 1 14 0V15"/><rect x="4" y="14" width="3.4" height="6" rx="1.6"/><rect x="16.6" y="14" width="3.4" height="6" rx="1.6"/>'),
+    _svg('<path d="M12 4.5L2.8 9l9.2 4.5L21.2 9z"/><path d="M6.8 11.5v3.8c0 1.6 10.4 1.6 10.4 0v-3.8"/><path d="M21.2 9v5"/>'),
+    _svg('<rect x="3.8" y="8" width="16.4" height="11.2" rx="2"/><path d="M9.5 8V6.6A1.6 1.6 0 0 1 11.1 5h1.8a1.6 1.6 0 0 1 1.6 1.6V8M3.8 12.8h16.4"/>'),
+    _svg('<path d="M8.5 9.5v-4c2.3 1.8 4.7 1.8 7 0v4a3.5 3.5 0 0 1-7 0z"/><path d="M12 13v8M12 18c-1.8-.4-3-1.4-3.6-3"/>')
+  ]
+};
+const MODULE_ICON_IX = [0,0,1,2,3,4,5,6,6,7,7,7];
+function injectIcons(){
+  document.getElementById('logo-icon').innerHTML = ICONS.stage;
+  document.getElementById('hero-icon').innerHTML = ICONS.stage;
+  document.querySelectorAll('.zic[data-zi]').forEach(el=>{ el.innerHTML = ICONS[el.dataset.zi] || ''; });
+}
+
+// ═══════════════════════════════════════════
+// DEMO CHECKS — 3 unlocked (verbatim from the full module) + 81 locked (title & risk only)
+// ═══════════════════════════════════════════
+const lk = (id,num,risk,title)=>({locked:true, id:'ad'+id, num, risk, title});
+const ZONES = [
+  { id: 1, icon: '🏠', checks: [
+      { id:'ad01', num:'AD01', risk:'high', title:'Ladder Safety for DIY and Home Maintenance Tasks',
+        who:'Homeowners carrying out their own DIY, painting, gutter-clearing or maintenance tasks',
+        what:'Using a damaged, wrong-height or incorrectly set-up ladder, or overreaching from it instead of moving it',
+        where:'Any DIY task off the ground — gutters, exterior painting, light fittings, loft hatches',
+        why:'Falls from height are one of the leading causes of serious home injury, and most home ladder falls happen not because of a rare fault but because of an easily avoidable setup mistake — the wrong angle, an unlocked extension, or reaching too far sideways.',
+        how:'Before climbing, check the ladder for damage, set it on firm, level ground at roughly a 75° angle (one unit out for every four units up), and make sure any extension is fully locked. Keep three points of contact at all times, never stand on the top two rungs, and climb down and reposition the ladder rather than leaning or overreaching.',
+        measurement:'Set-up angle ≈75° (1:4 ratio, EN 131); never stand on the top 2 rungs of a stepladder or top 3 rungs of an extension ladder; maximum safe reach roughly an arm\'s length to either side without leaning.',
+        example:'A homeowner clearing gutters leans sideways from the third-from-top rung to reach one extra section instead of moving the ladder, and it slides sideways on an uneven patio slab.',
+        tip:'If you have to stretch to reach it, climb down and move the ladder — the ten extra seconds is always cheaper than a fall.' },
+      { id:'ad02', num:'AD02', risk:'high', title:'Safe Working at Height Beyond Ladders',
+        who:'Homeowners attempting roof, loft or upper-level maintenance themselves',
+        what:'Walking on sloped or fragile roofing, standing on loft joists without boarding, or working near an unguarded edge without fall protection',
+        where:'Roofs, loft spaces, balconies and any elevated surface not designed for regular foot traffic',
+        why:'A fall from a roof or through an unboarded loft ceiling is often more serious than a ladder fall, because there is frequently no controlled way to stop the fall once it starts, and fragile materials such as old roofing felt or plasterboard can give way without warning.',
+        how:'Only step on loft joists or purpose-laid boards, never on the ceiling material between them. For any task on or above a sloped roof, on a fragile surface, or at a height where a fall could be serious, treat it as a job for a qualified tradesperson rather than DIY, and use secure edge protection if a competent professional advises it is needed.',
+        measurement:'Loft boarding load-rated for foot traffic before use; roof and high-risk height work above roughly 2m (6.5ft) generally recommended as professional-only unless proper edge protection is fitted.',
+        example:'A homeowner steps between loft joists to reach a water tank and puts a foot through the bedroom ceiling below.',
+        tip:'If a job needs you to stand where there is nothing solid and continuous beneath your feet, it is a professional job, not a weekend one.' },
+      lk('03','AD03','high','Power Tool Safety — Guards, PPE and Safe Operation'),
+      { id:'ad04', num:'AD04', risk:'medium', title:'Safe Storage of Tools, Power Equipment and DIY Chemicals',
+        who:'Homeowners storing DIY tools, power equipment, fuels and chemicals',
+        what:'Power tools, blades, fuels and chemicals stored without regard to child access, ignition sources or damage',
+        where:'Garages, sheds, utility rooms and wherever tools and chemicals are stored between uses',
+        why:'Poorly stored tools and chemicals create two risks at once — a damaged or unsecured power tool is both a safety and a security concern, and flammable liquids or chemicals stored near an ignition source or within reach of children are a common cause of serious home poisoning, burn or fire incidents.',
+        how:'Store power tools, blades and chemicals in a locked cabinet or high shelf out of reach of children, keep flammable liquids and fuels in their original labelled containers away from any ignition source or pilot light, and inspect cords, plugs and casings for damage before each use, retiring rather than repairing anything damaged.',
+        measurement:'Chemicals and power tools locked or kept out of child reach; flammable liquids stored away from ignition sources in original labelled containers; damaged tools retired immediately, never repaired with tape.',
+        example:'A can of solvent and a cordless drill are left on an open garage shelf at child height, directly above a water heater with a pilot flame.',
+        tip:'One locked cabinet for anything sharp, powered or chemical solves most of this risk in a single afternoon.' },
+      lk('05','AD05','critical','Smoke Alarm Testing and Placement for Homeowners'),
+      lk('06','AD06','critical','Carbon Monoxide Alarm Near Fuel-Burning Appliances'),
+      lk('07','AD07','high','Home Fire Escape Plan — Practising and Keeping It Current'),
+      lk('08','AD08','medium','Fire Extinguisher and Fire Blanket in the Kitchen'),
+      lk('09','AD09','high','Electrical Circuit Overload and DIY Wiring Limits'),
+      lk('10','AD10','medium','Extension Cord and Appliance Cable Safety'),
+      lk('11','AD11','medium','Damp and Mould — Early Identification and Remediation'),
+      lk('12','AD12','low','Ventilation to Prevent Damp and Mould Recurrence'),
+      lk('13','AD13','low','Garage, Shed and Outbuilding Security'),
+      lk('14','AD14','medium','Home Security — Locks, Entry Points and External Lighting')
+  ]},
+  { id: 2, icon: '👨‍👩‍👧', checks: [
+      lk('15','AD15','high','Childproofing Oversight — Reassessing Hazards as Children Grow'),
+      lk('16','AD16','critical','Recognising Red-Flag Symptoms in a Child That Need Urgent Care'),
+      lk('17','AD17','medium','Water Safety Supervision for Children at Home and Away'),
+      lk('18','AD18','high','Fall and Furniture-Tipping Hazards for Young Children in the Home'),
+      lk('19','AD19','high','Assessing a Home for Fall and Mobility Hazards for an Aging Parent'),
+      lk('20','AD20','critical','Recognising Warning Signs of Elder Abuse or Neglect'),
+      lk('21','AD21','medium','Coordinating Care Tasks with Family Members and Professionals'),
+      lk('22','AD22','high','Medication Safety and Organisation for Multiple Family Members'),
+      lk('23','AD23','critical','Safe Storage of Medications Away from Children'),
+      lk('24','AD24','medium','Recognising and Responding to Caregiver Burnout'),
+      lk('25','AD25','medium','Building a Sustainable Caregiving Routine'),
+      lk('26','AD26','high','Family Emergency Communication Plan'),
+      lk('27','AD27','medium','Emergency Documentation — Medical Info, Contacts and Access'),
+      lk('28','AD28','medium','Backup Care Plan for Children or Dependants in an Emergency')
+  ]},
+  { id: 3, icon: '💻', checks: [
+      lk('29','AD29','medium','Desk and Chair Ergonomics for Seated Work'),
+      lk('30','AD30','medium','Screen Height, Lighting and Eye Strain Prevention'),
+      lk('31','AD31','medium','Micro-Break and Movement Habits During Desk Work'),
+      lk('32','AD32','high','Commuting Safety — Driving, Cycling or Walking to Work'),
+      lk('33','AD33','medium','Safe Practices for Work Travel and Off-Site Meetings'),
+      lk('34','AD34','high','Manual Handling — Safe Lifting Technique'),
+      lk('35','AD35','medium','Manual Handling — Assessing a Load Before You Lift'),
+      lk('36','AD36','high','Recognising and Reporting Workplace Hazards'),
+      lk('37','AD37','medium','Workplace Emergency Procedures — Know Before You Need Them'),
+      lk('38','AD38','high','Recognising the Warning Signs of Work-Related Stress'),
+      lk('39','AD39','medium','Managing Workload and Realistic Boundaries'),
+      lk('40','AD40','medium','Protecting Personal Time from Work Creep'),
+      lk('41','AD41','low','Building Supportive Workplace Relationships and Networks'),
+      lk('42','AD42','medium','Knowing Your Workplace\'s Health and Safety Support Resources')
+  ]},
+  { id: 4, icon: '❤️', checks: [
+      lk('43','AD43','high','Blood Pressure Screening and Home Monitoring'),
+      lk('44','AD44','high','Cancer Screening Schedule for This Age Band'),
+      lk('45','AD45','medium','Skin Checks and Sun-Related Cancer Risk Awareness'),
+      lk('46','AD46','critical','Recognising the Warning Signs of a Heart Attack'),
+      lk('47','AD47','critical','Recognising the Warning Signs of a Stroke'),
+      lk('48','AD48','medium','Cholesterol and Metabolic Health Screening'),
+      lk('49','AD49','medium','Sleep Quality and Duration for Long-Term Health'),
+      lk('50','AD50','medium','Nutrition Habits That Support Midlife Health'),
+      lk('51','AD51','medium','Maintaining a Healthy Weight and Activity Level'),
+      lk('52','AD52','medium','Understanding Low-Risk Alcohol Guidance'),
+      lk('53','AD53','high','Recognising When Alcohol Use Has Become a Concern'),
+      lk('54','AD54','high','Recognising Burnout — Physical and Emotional Warning Signs'),
+      lk('55','AD55','critical','Recognising Anxiety and Depression and Knowing When to Seek Help'),
+      lk('56','AD56','medium','Building a Personal Support Network for Mental Wellbeing')
+  ]},
+  { id: 5, icon: '🛡️', checks: [
+      lk('57','AD57','high','Building and Maintaining an Emergency Fund'),
+      lk('58','AD58','medium','Reviewing Life Insurance Coverage for Dependants'),
+      lk('59','AD59','medium','Home and Contents Insurance — Adequate Coverage Check'),
+      lk('60','AD60','medium','Income Protection and Disability Insurance Awareness'),
+      lk('61','AD61','critical','Having a Will in Place and Keeping It Current'),
+      lk('62','AD62','high','Power of Attorney and Advance Healthcare Directives'),
+      lk('63','AD63','medium','Organising and Sharing Essential Document Locations'),
+      lk('64','AD64','high','Recognising Common Financial Scams Targeting Adults'),
+      lk('65','AD65','high','Identity Theft Prevention and Credit Monitoring'),
+      lk('66','AD66','medium','Secure Password and Account Practices for Financial Accounts'),
+      lk('67','AD67','medium','Retirement Savings — Starting or Reviewing Contributions'),
+      lk('68','AD68','medium','Understanding Your Retirement Timeline and Income Gap'),
+      lk('69','AD69','low','Reviewing Beneficiary Designations Regularly'),
+      lk('70','AD70','medium','Protecting Aging Parents from Financial Exploitation')
+  ]},
+  { id: 6, icon: '🤝', checks: [
+      lk('71','AD71','medium','Maintaining Open Communication in a Long-Term Partnership'),
+      lk('72','AD72','medium','Sharing the Mental Load of Household and Family Management'),
+      lk('73','AD73','high','Recognising the Warning Signs of Relationship Distress'),
+      lk('74','AD74','critical','Recognising Controlling or Abusive Relationship Behaviour and Knowing Where to Get Help'),
+      lk('75','AD75','medium','Maintaining Friendships and Social Connection in Midlife'),
+      lk('76','AD76','medium','Recognising and Countering Social Isolation'),
+      lk('77','AD77','low','Staying Connected with Extended Family Across Distance'),
+      lk('78','AD78','high','Assembling a Household Emergency Kit'),
+      lk('79','AD79','medium','Emergency Water and Food Reserves for the Household'),
+      lk('80','AD80','medium','Emergency Kit for the Car'),
+      lk('81','AD81','medium','Keeping Important Documents Emergency-Ready'),
+      lk('82','AD82','high','Annual Review and Practice of the Household Fire Escape Plan'),
+      lk('83','AD83','medium','Updating the Escape Plan for Life and Household Changes'),
+      lk('84','AD84','medium','Household Communication Plan for Being Apart During an Emergency')
+  ]}
+];
+
+const STORE_KEY = 'safelife-adult-demo';
+const completed = new Set();
+let theme = 'forest', mode = 'light', riskFilter = null, activeZone = 1;
+const TOTAL = 84;
+
+function persist(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({completed:[...completed], theme, mode})); }catch(e){}
+}
+function restore(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    (d.completed||[]).forEach(id=>completed.add(id));
+    if(d.theme) theme = d.theme;
+    if(d.mode) mode = d.mode;
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════
+// PROGRESS & STATS
+// ═══════════════════════════════════════════
+function updateProgress(){
+  const done = completed.size;
+  document.getElementById('topbar-done').textContent = done;
+  document.getElementById('progress-count').textContent = done + ' ' + t('ofWord') + ' ' + TOTAL;
+  document.getElementById('progress-fill').style.width = (done/TOTAL*100) + '%';
+  ZONES.forEach(z=>{
+    const zDone = z.checks.filter(c=>completed.has(c.id)).length;
+    document.getElementById('ztc-'+z.id).textContent = zDone + '/14';
+  });
+  document.getElementById('celebrate').classList.toggle('show', done === TOTAL);
+  persist();
+}
+function fillStats(){
+  const counts = {critical:0,high:0,medium:0,low:0};
+  ZONES.forEach(z=>z.checks.forEach(c=>counts[c.risk]++));
+  ['critical','high','medium','low'].forEach(r=>{ document.getElementById('s-'+r).textContent = counts[r]; });
+}
+
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function buildCard(check){
+  const card = document.createElement('div');
+  card.dataset.id = check.id;
+  card.dataset.risk = check.risk;
+  if(check.locked){
+    card.className = 'check-card locked';
+    card.innerHTML =
+      '<div class="check-header">' +
+        '<div class="lock-icon">🔒</div>' +
+        '<div class="check-num">' + check.num + '</div>' +
+        '<div class="check-risk risk-' + check.risk + '">' + t(check.risk) + '</div>' +
+        '<div class="check-title">' + check.title + '</div>' +
+        '<div class="check-chevron">🔓</div>' +
+      '</div>';
+    card.querySelector('.check-header').addEventListener('click', ()=>openModal('modal-unlock'));
+    return card;
+  }
+  card.className = 'check-card' + (completed.has(check.id) ? ' completed' : '');
+  card.innerHTML =
+    '<div class="check-header">' +
+      '<div class="check-checkbox">' + (completed.has(check.id) ? '✓' : '') + '</div>' +
+      '<div class="check-num">' + check.num + '</div>' +
+      '<div class="check-risk risk-' + check.risk + '">' + t(check.risk) + '</div>' +
+      '<div class="check-title">' + check.title + '</div>' +
+      '<div class="check-chevron">▼</div>' +
+    '</div>' +
+    '<div class="check-detail">' +
+      '<div class="detail-grid">' +
+        '<div class="detail-item"><div class="detail-label"><span>👤</span>' + t('who') + '</div><div class="detail-value">' + check.who + '</div></div>' +
+        '<div class="detail-item"><div class="detail-label"><span>⚠️</span>' + t('what') + '</div><div class="detail-value">' + check.what + '</div></div>' +
+        '<div class="detail-item"><div class="detail-label"><span>📍</span>' + t('where') + '</div><div class="detail-value">' + check.where + '</div></div>' +
+        '<div class="detail-item"><div class="detail-label"><span>❓</span>' + t('why') + '</div><div class="detail-value">' + check.why + '</div></div>' +
+        '<div class="detail-item full"><div class="detail-label"><span>🔧</span>' + t('how') + '</div><div class="detail-value">' + check.how + '</div></div>' +
+      '</div>' +
+      '<div class="measurement-box"><strong>📏 ' + t('standards') + '</strong>' + check.measurement + '</div>' +
+      '<div class="detail-item full" style="margin-top:10px;"><div class="detail-label"><span>💬</span>' + t('example') + '</div><div class="detail-value">' + check.example + '</div></div>' +
+      '<div class="tip-box"><span class="tip-icon">💡</span><span class="tip-text"><strong>' + t('quickTip') + ':</strong> ' + check.tip + '</span></div>' +
+    '</div>';
+  card.querySelector('.check-header').addEventListener('click', function(){ card.classList.toggle('open'); });
+  card.querySelector('.check-checkbox').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(completed.has(check.id)){ completed.delete(check.id); card.classList.remove('completed'); this.textContent=''; }
+    else { completed.add(check.id); card.classList.add('completed'); this.textContent='✓'; }
+    updateProgress();
+  });
+  return card;
+}
+
+function renderAll(){
+  document.querySelectorAll('.zone-panel').forEach(p=>p.remove());
+  const main = document.getElementById('main-content');
+  ZONES.forEach(z=>{
+    const panel = document.createElement('div');
+    panel.className = 'zone-panel' + (z.id === activeZone ? ' active' : '');
+    panel.id = 'zone-panel-' + z.id;
+    const header = document.createElement('div');
+    header.className = 'zone-header';
+    header.innerHTML = '<div class="zone-icon">' + (ICONS['z'+z.id] || z.icon) + '</div><div class="zone-header-text"><h2>' + t('z'+z.id) + '</h2><p>' + t('zd'+z.id) + '</p></div>';
+    panel.appendChild(header);
+    const actions = document.createElement('div');
+    actions.className = 'zone-actions';
+    const bExpand = document.createElement('button'); bExpand.className='btn btn-outline'; bExpand.textContent=t('expandAll');
+    const bCollapse = document.createElement('button'); bCollapse.className='btn btn-outline'; bCollapse.textContent=t('collapseAll');
+    const bUnmark = document.createElement('button'); bUnmark.className='btn btn-outline'; bUnmark.textContent=t('unmarkAll');
+    const bMark = document.createElement('button'); bMark.className='btn btn-primary'; bMark.textContent=t('markAll');
+    actions.append(bExpand,bCollapse,bUnmark,bMark);
+    panel.appendChild(actions);
+    const list = document.createElement('div');
+    list.className = 'checks-list';
+    z.checks.forEach(c=>list.appendChild(buildCard(c)));
+    panel.appendChild(list);
+    const strip = document.createElement('div');
+    strip.className = 'unlock-strip';
+    strip.innerHTML = '<h3>' + t('unlockH') + '</h3><p>' + t('unlockP') + '</p>';
+    const buyBtn = document.createElement('a');
+    buyBtn.className = 'btn btn-primary'; buyBtn.href = BUY_URL; buyBtn.target = '_blank'; buyBtn.rel = 'noopener';
+    buyBtn.style.textDecoration = 'none'; buyBtn.style.display = 'inline-block';
+    buyBtn.textContent = t('getFull');
+    strip.appendChild(buyBtn);
+    panel.appendChild(strip);
+    const disc = document.createElement('div');
+    disc.className = 'zone-disclaimer';
+    disc.textContent = '⚕ ' + t('disclaimer');
+    panel.appendChild(disc);
+    bExpand.addEventListener('click', ()=>list.querySelectorAll('.check-card:not(.locked)').forEach(c=>c.classList.add('open')));
+    bCollapse.addEventListener('click', ()=>list.querySelectorAll('.check-card').forEach(c=>c.classList.remove('open')));
+    bMark.addEventListener('click', ()=>{
+      const open = z.checks.filter(c=>!c.locked);
+      if(!open.length){ openModal('modal-unlock'); return; }
+      open.forEach(c=>completed.add(c.id)); refreshCards(list);
+    });
+    bUnmark.addEventListener('click', ()=>{ z.checks.filter(c=>!c.locked).forEach(c=>completed.delete(c.id)); refreshCards(list); });
+    main.appendChild(panel);
+  });
+  applyFilters();
+  updateProgress();
+}
+function refreshCards(list){
+  list.querySelectorAll('.check-card:not(.locked)').forEach(card=>{
+    const done = completed.has(card.dataset.id);
+    card.classList.toggle('completed', done);
+    card.querySelector('.check-checkbox').textContent = done ? '✓' : '';
+  });
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════
+// ZONES / SEARCH / FILTERS
+// ═══════════════════════════════════════════
+function switchZone(id){
+  activeZone = id;
+  document.querySelectorAll('.zone-tab').forEach(tab=>tab.classList.toggle('active', +tab.dataset.zone === id));
+  document.querySelectorAll('.zone-panel').forEach(p=>p.classList.toggle('active', p.id === 'zone-panel-' + id));
+}
+document.querySelectorAll('.zone-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{ document.getElementById('search-input').value=''; applyFilters(); switchZone(+tab.dataset.zone); });
+});
+document.querySelectorAll('.hero-badge[data-zone]').forEach(badge=>{
+  badge.addEventListener('click', ()=>{
+    switchZone(+badge.dataset.zone);
+    document.getElementById('zone-tabs').scrollIntoView({behavior:'smooth'});
+  });
+});
+document.querySelectorAll('.stat-pill[data-risk]').forEach(pill=>{
+  pill.addEventListener('click', ()=>{
+    riskFilter = (riskFilter === pill.dataset.risk) ? null : pill.dataset.risk;
+    document.querySelectorAll('.stat-pill[data-risk]').forEach(p=>p.classList.toggle('filter-on', p.dataset.risk === riskFilter));
+    applyFilters();
+  });
+});
+document.getElementById('search-input').addEventListener('input', applyFilters);
+
+function applyFilters(){
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  const searching = q.length > 0;
+  let anyVisible = false;
+  ZONES.forEach(z=>{
+    const panel = document.getElementById('zone-panel-' + z.id);
+    if(!panel) return;
+    let zoneVisible = 0;
+    panel.querySelectorAll('.check-card').forEach(card=>{
+      const check = z.checks.find(c=>c.id === card.dataset.id);
+      const text = (check.locked
+        ? check.title
+        : check.title+' '+check.who+' '+check.what+' '+check.where+' '+check.why+' '+check.how+' '+check.measurement+' '+check.example+' '+check.tip
+      ).toLowerCase();
+      const matchQ = !searching || text.includes(q);
+      const matchR = !riskFilter || check.risk === riskFilter;
+      const show = matchQ && matchR;
+      card.style.display = show ? '' : 'none';
+      if(show) zoneVisible++;
+    });
+    if(searching || riskFilter){
+      panel.classList.toggle('active', zoneVisible > 0);
+      panel.querySelector('.zone-actions').style.display = 'none';
+    } else {
+      panel.classList.toggle('active', z.id === activeZone);
+      panel.querySelector('.zone-actions').style.display = '';
+    }
+    if(zoneVisible > 0) anyVisible = true;
+  });
+  document.getElementById('search-no-results').style.display = (searching || riskFilter) && !anyVisible ? 'block' : 'none';
+}
+
+// ═══════════════════════════════════════════
+// LOCKED TOOLS / MODE / MODAL
+// ═══════════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click', e=>{ if(e.target === o) o.classList.remove('open'); }));
+document.getElementById('btn-later').addEventListener('click', ()=>closeModal('modal-unlock'));
+['btn-manual','btn-cheat','btn-print','btn-save','btn-load','btn-theme'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', ()=>openModal('modal-unlock'));
+});
+document.getElementById('btn-search').addEventListener('click', ()=>{
+  const s = document.getElementById('search-input');
+  s.scrollIntoView({behavior:'smooth', block:'center'});
+  setTimeout(()=>s.focus(), 350);
+});
+document.getElementById('btn-mode').addEventListener('click', function(){
+  mode = mode === 'light' ? 'dark' : 'light';
+  document.body.dataset.mode = mode;
+  this.textContent = mode === 'light' ? '🌙' : '☀️';
+  persist();
+});
+
+// ═══════════════════════════════════════════
+// FLOATING NAV
+// ═══════════════════════════════════════════
+function visibleCards(){
+  return [...document.querySelectorAll('.zone-panel.active .check-card')].filter(c=>c.style.display !== 'none');
+}
+function nearestCardIx(cards){
+  const mark = window.innerHeight * 0.35;
+  let best = 0, bestDist = Infinity;
+  cards.forEach((c, i)=>{
+    const d = Math.abs(c.getBoundingClientRect().top - mark);
+    if(d < bestDist){ bestDist = d; best = i; }
+  });
+  return best;
+}
+function goToCard(cards, ix){
+  if(ix < 0){ window.scrollTo({top:0, behavior:'smooth'}); return; }
+  if(ix > cards.length - 1) ix = cards.length - 1;
+  const y = cards[ix].getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.35;
+  window.scrollTo({top: Math.max(0, y), behavior:'smooth'});
+}
+document.getElementById('fn-top').addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
+document.getElementById('fn-next').addEventListener('click', ()=>{
+  const cards = visibleCards(); if(!cards.length) return;
+  goToCard(cards, nearestCardIx(cards) + 1);
+});
+document.getElementById('fn-prev').addEventListener('click', ()=>{
+  const cards = visibleCards(); if(!cards.length) return;
+  goToCard(cards, nearestCardIx(cards) - 1);
+});
+
+// ═══════════════════════════════════════════
+// COLLECTION
+// ═══════════════════════════════════════════
+const MODULES = [
+  {a:'0–28 Days'},
+  {a:'1–12 Months'},
+  {a:'1–3 Years'},
+  {a:'3–6 Years'},
+  {a:'6–12 Years'},
+  {a:'13–18 Years'},
+  {a:'19–29 Years'},
+  {a:'30–44 Years', owned:true},
+  {a:'45–64 Years'},
+  {a:'65–79 Years'},
+  {a:'80–89 Years'},
+  {a:'90+ Years'}
+];
+const SITUATION_MODULES = [
+  {name:'Pregnancy', sub:'Stage 0', status:'available', emoji:'🤰'},
+  {name:'Postpartum Recovery', sub:'Situation Module', status:'available', emoji:'🌷'},
+  {name:'Grandparent-Proofing', sub:'Situation Module', status:'available', emoji:'👵'},
+  {name:'Autism & Neurodivergent Children', sub:'Situation Module', status:'available', emoji:'♾️'},
+  {name:'Emergency Preparedness', sub:'Situation Module', status:'available', emoji:'🧳'},
+  {name:'Twins & Multiples', sub:'Situation Module', status:'available', emoji:'👯'},
+  {name:'Babysitter/Nanny Handover', sub:'Situation Module', status:'available', emoji:'🗒️'},
+  {name:'Dementia & Alzheimer\'s Care', sub:'Situation Module', status:'available', emoji:'🏠'},
+  {name:'Injury & Post-Surgery Recovery', sub:'Coming Soon', status:'available', emoji:'🩹'},
+  {name:'Chronic Conditions Household', sub:'Coming Soon', status:'available', emoji:'💊'},
+  {name:'Limited Mobility / Wheelchair', sub:'Coming Soon', status:'available', emoji:'♿'},
+  {name:'Visually / Hearing Impaired', sub:'Situation Module', status:'available', emoji:'🔔'},
+  {name:'New Pet + Baby Household', sub:'Coming Soon', status:'coming', emoji:'🐾'},
+  {name:'The Caregiver\'s Own Safety', sub:'Coming Soon', status:'coming', emoji:'🤲'},
+  {name:'New Home Move-In Audit', sub:'Coming Soon', status:'coming', emoji:'🏠'},
+  {name:'Farm & Rural Household', sub:'Coming Soon', status:'coming', emoji:'🚜'},
+  {name:'Home Office / WFH', sub:'Coming Soon', status:'coming', emoji:'💻'}
+];
+function buildSituationGrid(){
+  const grid = document.getElementById('situation-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  SITUATION_MODULES.forEach(m=>{
+    const card = document.createElement('div');
+    card.className = 'module-card';
+    const tagClass = m.status === 'coming' ? 'coming' : 'addon';
+    const tagLabel = m.status === 'coming' ? 'Coming Soon' : 'Available Separately';
+    card.innerHTML = '<span class="m-emoji">' + m.emoji + '</span><span class="m-name">' + m.name + '</span><span class="m-age">' + m.sub + '</span>' +
+      '<span class="module-tag ' + tagClass + '">' + tagLabel + '</span>';
+    grid.appendChild(card);
+  });
+}
+function buildCollection(){
+  const grid = document.getElementById('collection-grid');
+  grid.innerHTML = '';
+  MODULES.forEach((m, mi)=>{
+    const card = document.createElement('div');
+    card.className = 'module-card';
+    const iconIx = MODULE_ICON_IX[mi] != null ? MODULE_ICON_IX[mi] : mi;
+    card.innerHTML = '<span class="m-emoji">' + ICONS.stages[iconIx] + '</span><span class="m-name">' + t('mn'+(mi+1)) + '</span><span class="m-age">' + m.a + '</span>' +
+      '<span class="module-tag ' + (m.owned ? 'owned' : 'addon') + '">' + (m.owned ? t('owned') : t('addon')) + '</span>';
+    grid.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+restore();
+injectIcons();
+document.body.dataset.theme = theme;
+document.body.dataset.mode = mode;
+document.getElementById('btn-mode').textContent = mode === 'light' ? '🌙' : '☀️';
+fillStats();
+renderAll();
+buildCollection();
+buildSituationGrid();
+</script>
+</body>
+</html>
